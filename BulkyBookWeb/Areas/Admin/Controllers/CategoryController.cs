@@ -2,22 +2,23 @@
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Microsoft.AspNetCore.Mvc;
-namespace BullkyWeb.Controllers
+namespace BulkyBookWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _CategoryRepo;
+        private readonly IUnitOfWork _UnitOfWork;
 
-        public CategoryController(ICategoryRepository context)    
+        public CategoryController(IUnitOfWork uow)
         {
 
-            _CategoryRepo = context;
+            _UnitOfWork = uow;
 
         }
 
         public IActionResult Index()
         {
-         List<Category> objCategory = _CategoryRepo.GetAll().ToList();
+            List<Category> objCategory = _UnitOfWork.Category.GetAll().ToList();
 
             return View(objCategory);
         }
@@ -30,16 +31,16 @@ namespace BullkyWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
-           if (obj.Name == obj.DisplayOrder.ToString())
-           {
-               ModelState.AddModelError("name", "dotasham yeki zadi dowsh");
-            }
-           
-
-            if (ModelState.IsValid) 
+            if (obj.Name == obj.DisplayOrder.ToString())
             {
-            _CategoryRepo.Add(obj);
-                _CategoryRepo.Save();
+                ModelState.AddModelError("name", "dotasham yeki zadi dowsh");
+            }
+
+
+            if (ModelState.IsValid)
+            {
+                _UnitOfWork.Category.Add(obj);
+                _UnitOfWork.Save();
                 TempData["Success"] = "Category Created SuccessFully ";
                 return RedirectToAction("Index");
             }
@@ -47,11 +48,11 @@ namespace BullkyWeb.Controllers
         }
         public IActionResult Edit(int? id)
         {
-            if(id==null|| id == 0)
+            if (id == null || id == 0)
             {
                 return NotFound();
             }
-          Category  catedit=_CategoryRepo.Get(i=> i.Id==id);
+            Category catedit = _UnitOfWork.Category.Get(i => i.Id == id);
             if (catedit == null)
             {
                 return NotFound();
@@ -62,12 +63,12 @@ namespace BullkyWeb.Controllers
         [HttpPost]
         public IActionResult Edit(Category obj)
         {
-            
+
 
             if (ModelState.IsValid)
             {
-                _CategoryRepo.Update(obj);
-                _CategoryRepo.Save();
+                _UnitOfWork.Category.Update(obj);
+                _UnitOfWork.Save();
                 TempData["Success"] = "Category Update SuccessFully ";
                 return RedirectToAction("Index");
             }
@@ -79,7 +80,7 @@ namespace BullkyWeb.Controllers
             {
                 return NotFound();
             }
-            Category catedit = _CategoryRepo.Get(i => i.Id == id); 
+            Category catedit = _UnitOfWork.Category.Get(i => i.Id == id);
             if (catedit == null)
             {
                 return NotFound();
@@ -87,19 +88,19 @@ namespace BullkyWeb.Controllers
 
             return View(catedit);
         }
-        [HttpPost,ActionName("Delete")]
-        public IActionResult DeletePost (int? id)
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeletePost(int? id)
         {
-            Category? obj = _CategoryRepo.Get(i => i.Id == id);
+            Category? obj = _UnitOfWork.Category.Get(i => i.Id == id);
             if (obj == null)
             {
                 return NotFound();
             }
-           _CategoryRepo.Remove(obj);
-            _CategoryRepo.Save();
+            _UnitOfWork.Category.Remove(obj);
+            _UnitOfWork.Save();
             TempData["Success"] = "Category Deleted SuccessFully ";
             return RedirectToAction("Index");
-           
+
         }
     }
 }
