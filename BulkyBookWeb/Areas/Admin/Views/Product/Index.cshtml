@@ -33,14 +33,12 @@
                         Author
                     </th>
                     <th>
-                       List Price
+                        List Price
                     </th>
+                   
                     <th>
                         Category
                     </th>
-                    @* <th>
-                        Price
-                    </th> *@
                     <th>
 
                     </th>
@@ -55,9 +53,6 @@
                         <td>
                             @obj.Title
                         </td>
-                       @*  <td>
-                            @obj.Description
-                        </td> *@
                         <td>
                             @obj.Author
                         </td>
@@ -68,7 +63,7 @@
                             @obj.Price
                         </td>
                         <td>
-
+                            @obj.Category.Name
                         </td>
                         <td>
                             <div class="w-75 btn-group " role="group">
